@@ -1,0 +1,33 @@
+{
+  "name": "@hexlet/code",
+  "version": "1.0.0",
+  "description": "add later",
+  "main": "index.js",
+  "type": "module",
+  "bin": {
+    "gendiff": "bin/gendiff.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/avelebron/frontend-project-46.git"
+  },
+  "keywords": [
+    "add",
+    "later"
+  ],
+  "author": "Vladlena",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/avelebron/frontend-project-46/issues"
+  },
+  "homepage": "https://github.com/avelebron/frontend-project-46#readme",
+  "dependencies": {
+    "commander": "^10.0.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.33.0"
+  }
+}
