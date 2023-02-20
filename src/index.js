@@ -4,9 +4,8 @@ import process from 'process';
 import _ from 'lodash';
 
 export default(filepath1, filepath2) => {
-  const currentWD = process.cwd();
-  const obj1 = JSON.parse(fs.readFileSync(path.resolve(currentWD, filepath1)));
-  const obj2 = JSON.parse(fs.readFileSync(path.resolve(currentWD, filepath2)));
+  const obj1 = JSON.parse(fs.readFileSync(path.resolve(process.cwd(), filepath1)));
+  const obj2 = JSON.parse(fs.readFileSync(path.resolve(process.cwd(), filepath2)));
 
   const keys = _.uniq(_.keys(obj1).concat(_.keys(obj2)));
 
