@@ -11,4 +11,4 @@ lint: # запускает линтер
 	npx eslint .
 
 test: # запускает тест
-	npm test
+	npm run test
