@@ -1,15 +1,18 @@
 import { test, expect } from '@jest/globals';
-
-import genDiff from '../bin/gendiff.js';
-const compare = genDiff();
-
+import path from 'path';
+import fs from 'fs';
 import { fileURLToPath } from 'url';
-import { dirname, path } from 'path';
+import genDiff from '../bin/gendiff.js';
 
 const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+const __dirname = path.dirname(__filename);
+
 const getFixturePath = (filename) => path.join(__dirname, '..', '__fixtures__', filename);
+const readFixture = (filename) => fs.readFileSync(getFixturePath(filename), 'utf-8');
+const correctResult = readFixture('correctResult.txt');
 
 test('first test', () => {
-  expect(compare(getFixturePath('file1'), getFixturePath('file2'))).toBe('...');
+  const filePath1 = getFixturePath('file1.json');
+  const filePath2 = getFixturePath('file2.json');
+  expect(genDiff(filePath1, filePath2)).toBe(correctResult);
 });
