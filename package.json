@@ -1,8 +1,8 @@
 {
   "name": "@hexlet/code",
   "version": "1.0.0",
-  "description": "add later",
-  "main": "bin/gendiff.js",
+  "description": "Compares two configuration files and shows a difference",
+  "main": "bin/gendiff.js", //chek it
   "type": "module",
   "bin": {
     "gendiff": "bin/gendiff.js"
@@ -14,10 +14,6 @@
     "type": "git",
     "url": "git+https://github.com/avelebron/frontend-project-46.git"
   },
-  "keywords": [
-    "add",
-    "later"
-  ],
   "author": "Vladlena",
   "license": "ISC",
   "bugs": {

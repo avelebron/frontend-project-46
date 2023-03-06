@@ -12,3 +12,6 @@ lint: # запускает линтер
 
 test: # запускает тест
 	npm run test
+
+test-coverage: # запускает тест-кавер
+	npm test -- --coverage --coverageProvider=v8
