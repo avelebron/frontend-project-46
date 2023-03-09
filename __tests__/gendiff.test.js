@@ -12,8 +12,14 @@ const readFixture = (filename) => fs.readFileSync(getFixturePath(filename), 'utf
 
 const correctResult = readFixture('correctResult.txt');
 
-test('first test', () => {
+test('json test', () => {
   const filePath1 = getFixturePath('file1.json');
   const filePath2 = getFixturePath('file2.json');
+  expect(genDiff(filePath1, filePath2)).toBe(correctResult);
+});
+
+test('yaml test', () => {
+  const filePath1 = getFixturePath('filepath1.yaml');
+  const filePath2 = getFixturePath('filepath2.yaml');
   expect(genDiff(filePath1, filePath2)).toBe(correctResult);
 });
