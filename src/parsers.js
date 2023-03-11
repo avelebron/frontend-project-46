@@ -7,8 +7,6 @@ const parsers = {
 };
 
 export default (data, format) => {
-  if (!Object.hasOwn(parsers, format)) {
-    throw new Error(`Format ${format} - unsupported.`);
-  }
-  return parsers[format](data);
+  const parse = parsers[format];
+  return parse(data);
 };
