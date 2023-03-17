@@ -2,7 +2,6 @@ import _ from 'lodash';
 
 const replacer = ' ';
 const spacesCount = 4;
-
 const getIndent = (depth) => replacer.repeat(depth * spacesCount - 2);
 
 const signs = {
