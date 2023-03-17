@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-const stringify = (value) => {
+const normalize = (value) => {
   if (_.isObject(value)) {
     return '[complex value]';
   }
@@ -13,27 +13,31 @@ const stringify = (value) => {
 };
 
 export default (data) => {
-  const iter = (node, key = '') => {
-    const result = node.flatMap((item) => {
-      const newKeys = [...key, item.key];
+  const iter = (node, path) => {
+    const lines = node.flatMap((data) => {
+      const {
+        type, key, value, valueBefore, valueAfter, children,
+      } = data;
 
-      switch (item.type) {
-        case 'object':
-          return iter(item.children, newKeys);
-        case 'added':
-          return `Property '${newKeys.join('.')}' was added with value: ${stringify(item.val)}`;
-        case 'deleted':
-          return `Property '${newKeys.join('.')}' was removed`;
-        case 'unchanged':
-          return null;
-        case 'changed':
-          return `Property '${newKeys.join('.')}' was updated. From ${stringify(item.val1)} to ${stringify(item.val2)}`;
+      switch (type) {
+        case 'nested': {
+          return iter(children, `${path}${key}.`);
+        }
+        case 'added': {
+          return `Property '${path}${key}' was added with value: ${normalize(value)}`;
+        }
+        case 'deleted': {
+          return `Property '${path}${key}' was removed`;
+        }
+        case 'changed': {
+          return `Property '${path}${key}' was updated. From ${normalize(valueBefore)} to ${normalize(valueAfter)}`;
+        }
         default:
           return null;
       }
     });
-    return result.join('\n');
+    return lines.join('\n');
   };
 
-  return iter(data, []);
+  return iter(data, '');
 };
