@@ -10,10 +10,10 @@ const calculateDiff = (file1, file2) => {
       return { key, type: 'nested', children: calculateDiff(file1[key], file2[key]) };
     }
 
-    if (!_.hasOwn(file1, key)) {
+    if (!_.has(file1, key)) {
       return { key, type: 'added', value: file2[key] };
     }
-    if (!_.hasOwn(file2, key)) {
+    if (!_.has(file2, key)) {
       return { key, type: 'deleted', value: file1[key] };
     }
     if (file1[key] !== file2[key]) {
