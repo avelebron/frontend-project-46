@@ -24,7 +24,7 @@ const formatStylish = (data) => {
       } = data;
 
       switch (type) {
-        case 'nested': {
+        case 'object': {
           return `${getIndent(depth)}  ${key}: ${iter(children, depth + 1)}`;
         }
         case 'added': {
