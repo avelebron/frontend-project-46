@@ -1,39 +1,42 @@
 import _ from 'lodash';
 
-const getIndent = (depth, replacer = ' ', spacesCount = 4) => replacer.repeat(spacesCount * depth - 2);
-const makeString = (value, depth) => {
-  if (!_.isObject(value)) {
-    return value;
-  }
-  const keys = Object.keys(value);
-  const result = keys.map((key) => {
-    const newKey = value[key];
-    return `${getIndent(depth + 1)}  ${key}: ${makeString(newKey, depth + 1)}`;
-  });
-  return `{\n${result.join('\n')}\n  ${getIndent(depth)}}`;
+const replacer = ' ';
+const spacesCount = 4;
+const getIndent = (depth) => replacer.repeat(depth * spacesCount - 2);
+
+const signs = {
+  added: '+ ',
+  deleted: '- ',
+  unchanged: '  ',
 };
 
-const stylishFormat = (array) => {
-  const iter = (node, depth = 1) => {
-    const result = node.map((element) => {
-      if (element.type === 'parent') {
-        return `${getIndent(depth)}  ${element.key}: {\n${iter(element.children, depth + 1)}\n${getIndent(depth)}  }`;
-      }
-      if (element.type === 'stay same') {
-        return `${getIndent(depth)}  ${element.key}: ${makeString(element.children, depth)}`;
-      }
-      if (element.type === 'deleted') {
-        return `${getIndent(depth)}- ${element.key}: ${makeString(element.children, depth)}`;
-      }
-      if (element.type === 'added') {
-        return `${getIndent(depth)}+ ${element.key}: ${makeString(element.children, depth)}`;
-      }
-      return `${getIndent(depth)}- ${element.key}: ${makeString(element.children, depth)}\n${getIndent(depth)}+ ${element.key}: ${makeString(element.children2, depth)}`;
-    });
-
-    return result.join('\n');
+export default (data) => {
+  const iter = (curentValue, depth) => {
+    if (!_.isObject(curentValue)) {
+      return `${curentValue}`;
+    }
+    const bracketIndent = replacer.repeat((depth - 1) * spacesCount);
+    const lines = Object
+      .entries(curentValue)
+      .map(([key, val]) => {
+        switch (val.type) {
+          case 'added':
+          case 'deleted':
+          case 'unchanged':
+            return `${getIndent(depth)}${signs[val.type]}${key}: ${iter(val.value, depth + 1)}`;
+          case 'changed':
+            return `${getIndent(depth)}- ${key}: ${iter(val.value1, depth + 1)}\n${getIndent(depth)}+ ${key}: ${iter(val.value2, depth + 1)}`;
+          case 'nested':
+            return `${getIndent(depth)}  ${key}: ${iter(val.children, depth + 1)}`;
+          default:
+            return `${getIndent(depth)}  ${key}: ${iter(val.value || val, depth + 1)}`;
+        }
+      });
+    return [
+      '{',
+      ...lines,
+      `${bracketIndent}}`,
+    ].join('\n');
   };
-  return `{\n${iter(array)}\n}`;
+  return iter(data, 1);
 };
-
-export default stylishFormat;
