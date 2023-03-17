@@ -36,7 +36,8 @@ export default (data) => {
           return null;
       }
     });
-    return lines.join('\n');
+
+    return _.compact(lines).join('\n');
   };
 
   return iter(data, '');
