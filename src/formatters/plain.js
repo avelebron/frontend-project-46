@@ -33,7 +33,7 @@ export default (data) => {
           return `Property '${path}${key}' was updated. From ${normalize(valueBefore)} to ${normalize(valueAfter)}`;
         }
         default:
-          return null;
+          throw new Error(`Unknown type ${type}`);
       }
     });
     return lines.join('\n');
