@@ -1,52 +1,50 @@
 import _ from 'lodash';
 
-const replacer = ' ';
-const spacesCount = 4;
-
-const getIndent = (depth) => replacer.repeat(depth * spacesCount - 2);
-const getReplacerIndent = (depth) => replacer.repeat(depth * spacesCount - spacesCount);
-
-const stringify = (data, depth) => {
+const stringify = (data, depth, replacer) => {
   if (!_.isObject(data)) {
     return `${data}`;
   }
-  const entries = Object.entries(data);
-  const lines = entries.map(([key, value]) => `${getIndent(depth)}  ${key}: ${stringify(value, depth + 1)}`);
 
-  return ['{', ...lines, `${getReplacerIndent(depth)}}`].join('\n');
+  const indentForKey = replacer.repeat(depth + 1);
+  const indentForBracket = replacer.repeat(depth);
+  const lines = Object.entries(data)
+    .map(([key, value]) => `${indentForKey}${key}: ${stringify(value, depth + 1, replacer)}`);
+
+  return ['{', ...lines, `${indentForBracket}}`].join('\n');
 };
 
-const formatStylish = (data) => {
-  const iter = (node, depth) => {
-    const lines = node.map((data) => {
-      const {
-        type, key, value, valueBefore, valueAfter, children,
-      } = data;
-
-      switch (type) {
-        case 'object': {
-          return `${getIndent(depth)}  ${key}: ${iter(children, depth + 1)}`;
-        }
-        case 'added': {
-          return `${getIndent(depth)}+ ${key}: ${stringify(value, depth + 1)}`;
-        }
-        case 'deleted': {
-          return `${getIndent(depth)}- ${key}: ${stringify(value, depth + 1)}`;
-        }
-        case 'changed': {
-          return `${getIndent(depth)}- ${key}: ${stringify(valueBefore, depth + 1)}\n${getIndent(depth)}+ ${key}: ${stringify(valueAfter, depth + 1)}`;
-        }
-        case 'unchanged': {
-          return `${getIndent(depth)}  ${key}: ${stringify(value, depth + 1)}`;
-        }
-        default:
-          throw new Error(`Type ${type} is unknown`);
-      }
-    });
-    return ['{', ...lines, `${getReplacerIndent(depth)}}`].join('\n');
-  };
-
-  return iter(data, 1);
+const sign = {
+  added: '+',
+  deleted: '-',
+  unchanged: ' ',
 };
 
-export default formatStylish;
+const makeStylish = (diff, replacer = '    ') => {
+  const iter = (tree, depth) => tree.map((node) => {
+    const indent = replacer.repeat(depth);
+    const indentForSign = indent.slice(2);
+
+    const makeLine = (value, mark) => `${indentForSign}${mark} ${node.key}: ${stringify(value, depth, replacer)}`;
+
+    switch (node.state) {
+      case 'added':
+        return makeLine(node.value, sign.added);
+      case 'deleted':
+        return makeLine(node.value, sign.deleted);
+      case 'notChanged':
+        return makeLine(node.value, sign.unchanged);
+      case 'changed':
+        return [`${makeLine(node.value1, sign.deleted)}`,
+          `${makeLine(node.value2, sign.added)}`].join('\n');
+      case 'nested':
+        return `${indent}${node.key}: ${['{', ...iter(node.value, depth + 1), `${indent}}`].join('\n')}`;
+      default:
+        throw new Error(`Type: ${node.state} is undefined`);
+    }
+  });
+
+  const stylishDiff = iter(diff, 1);
+  return ['{', ...stylishDiff, '}'].join('\n');
+};
+
+export default makeStylish;
