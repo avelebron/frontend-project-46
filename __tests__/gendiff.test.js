@@ -10,17 +10,17 @@ const __dirname = path.dirname(__filename);
 const getFixturePath = (filename) => path.join(__dirname, '..', '__fixtures__', filename);
 const readFixture = (filename) => fs.readFileSync(getFixturePath(filename), 'utf-8');
 
-const expectedJSON = readFixture('resultJSON.txt');
-const expectedStylish = readFixture('resultStylish.txt');
-const expectedPlain = readFixture('resultPLAIN.txt');
+const expectedJSON = readFixture('result_json.txt');
+const expectedStylish = readFixture('result_stylish.txt');
+const expectedPlain = readFixture('result_plain.txt');
 
 const extensions = ['yaml', 'json'];
 
 test.each([
   extensions,
 ])('test', (extension) => {
-  const filepath1 = getFixturePath(`before.${extension}`);
-  const filepath2 = getFixturePath(`after.${extension}`);
+  const filepath1 = getFixturePath(`file1.${extension}`);
+  const filepath2 = getFixturePath(`file2.${extension}`);
 
   expect(genDiff(filepath1, filepath2)).toBe(expectedStylish);
   expect(genDiff(filepath1, filepath2, 'stylish')).toBe(expectedStylish);
