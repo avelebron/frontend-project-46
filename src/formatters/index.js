@@ -11,6 +11,6 @@ export default (data, format) => {
     case 'json':
       return formatJSON(data);
     default:
-      throw new Error(`Error: Unknown type: ${format}`);
+      throw new Error(`This format is not supported: ${format}`);
   }
 };

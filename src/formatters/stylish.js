@@ -4,49 +4,40 @@ const replacer = ' ';
 const spacesCount = 4;
 
 const getIndent = (depth) => replacer.repeat(depth * spacesCount - 2);
-const getReplacerIndent = (depth) => replacer.repeat(depth * spacesCount - spacesCount);
 
-const stringify = (data, depth) => {
-  if (!_.isObject(data)) {
-    return `${data}`;
-  }
-  const entries = Object.entries(data);
-  const lines = entries.map(([key, value]) => `${getIndent(depth)}  ${key}: ${stringify(value, depth + 1)}`);
-
-  return ['{', ...lines, `${getReplacerIndent(depth)}}`].join('\n');
+const signs = {
+  added: '+ ',
+  deleted: '- ',
+  unchanged: '  ',
 };
 
-const formatStylish = (data) => {
-  const iter = (node, depth) => {
-    const lines = node.map((data) => {
-      const {
-        type, key, value, valueBefore, valueAfter, children,
-      } = data;
-
-      switch (type) {
-        case 'object': {
-          return `${getIndent(depth)}  ${key}: ${iter(children, depth + 1)}`;
+export default (data) => {
+  const iter = (curentValue, depth) => {
+    if (!_.isPlainObject(curentValue)) {
+      return `${curentValue}`;
+    }
+    const bracketIndent = replacer.repeat((depth - 1) * spacesCount);
+    const lines = Object
+      .entries(curentValue)
+      .map(([key, val]) => {
+        switch (val.type) {
+          case 'added':
+          case 'deleted':
+          case 'unchanged':
+            return `${getIndent(depth)}${signs[val.type]}${key}: ${iter(val.value, depth + 1)}`;
+          case 'changed':
+            return `${getIndent(depth)}- ${key}: ${iter(val.value1, depth + 1)}\n${getIndent(depth)}+ ${key}: ${iter(val.value2, depth + 1)}`;
+          case 'nested':
+            return `${getIndent(depth)}  ${key}: ${iter(val.children, depth + 1)}`;
+          default:
+            return `${getIndent(depth)}  ${key}: ${iter(val.value || val, depth + 1)}`;
         }
-        case 'added': {
-          return `${getIndent(depth)}+ ${key}: ${stringify(value, depth + 1)}`;
-        }
-        case 'deleted': {
-          return `${getIndent(depth)}- ${key}: ${stringify(value, depth + 1)}`;
-        }
-        case 'changed': {
-          return `${getIndent(depth)}- ${key}: ${stringify(valueBefore, depth + 1)}\n${getIndent(depth)}+ ${key}: ${stringify(valueAfter, depth + 1)}`;
-        }
-        case 'unchanged': {
-          return `${getIndent(depth)}  ${key}: ${stringify(value, depth + 1)}`;
-        }
-        default:
-          throw new Error(`Type ${type} is unknown`);
-      }
-    });
-    return ['{', ...lines, `${getReplacerIndent(depth)}}`].join('\n');
+      });
+    return [
+      '{',
+      ...lines,
+      `${bracketIndent}}`,
+    ].join('\n');
   };
-
   return iter(data, 1);
 };
-
-export default formatStylish;
