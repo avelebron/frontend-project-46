@@ -12,7 +12,7 @@ const readFile = (filepath) => {
 
 const getParsedData = (file) => {
   const data = readFile(file);
-  const format = path.extname(file).substring(1);
+  const format = path.extname(file).slice(1);
   return parse(data, format);
 };
 

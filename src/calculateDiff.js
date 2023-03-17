@@ -1,13 +1,13 @@
 import _ from 'lodash';
 
-const buildTree = (file1, file2) => {
+const calculateDiff = (file1, file2) => {
   const keys1 = Object.keys(file1);
   const keys2 = Object.keys(file2);
   const keys = _.sortBy(_.union(keys1, keys2));
 
   const diff = keys.map((key) => {
     if (_.isObject(file1[key]) && _.isObject(file2[key])) {
-      return { key, type: 'nested', children: buildTree(file1[key], file2[key]) };
+      return { key, type: 'nested', children: calculateDiff(file1[key], file2[key]) };
     }
 
     if (!Object.hasOwn(file1, key)) {
@@ -28,4 +28,4 @@ const buildTree = (file1, file2) => {
   return diff;
 }
 
-export default buildTree;
+export default calculateDiff;

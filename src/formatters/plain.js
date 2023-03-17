@@ -12,7 +12,7 @@ const normalize = (value) => {
   return value;
 };
 
-const formatPlain = (tree) => {
+export default (data) => {
   const iter = (node, path) => {
     const lines = node.flatMap((data) => {
       const {
@@ -33,13 +33,11 @@ const formatPlain = (tree) => {
           return `Property '${path}${key}' was updated. From ${normalize(valueBefore)} to ${normalize(valueAfter)}`;
         }
         default:
-          return [];
+          return null;
       }
     });
     return lines.join('\n');
   };
 
-  return iter(tree, '');
+  return iter(data, '');
 };
-
-export default formatPlain;

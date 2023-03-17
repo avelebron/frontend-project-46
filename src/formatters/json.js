@@ -1,3 +1,3 @@
-const formatJSON = (tree) => JSON.stringify(tree, null, '  ');
+const formatJSON = (data) => JSON.stringify(data);
 
 export default formatJSON;

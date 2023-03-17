@@ -16,7 +16,7 @@ const stringify = (data, depth) => {
   return ['{', ...lines, `${getReplacerIndent(depth)}}`].join('\n');
 };
 
-const formatStylish = (tree) => {
+const formatStylish = (data) => {
   const iter = (node, depth) => {
     const lines = node.map((data) => {
       const {
@@ -46,7 +46,7 @@ const formatStylish = (tree) => {
     return ['{', ...lines, `${getReplacerIndent(depth)}}`].join('\n');
   };
 
-  return iter(tree, 1);
+  return iter(data, 1);
 };
 
 export default formatStylish;
