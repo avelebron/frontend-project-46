@@ -35,5 +35,5 @@ export default (data) => {
     return result.join('\n');
   };
 
-  return iter(data, '');
+  return iter(data, []);
 };
