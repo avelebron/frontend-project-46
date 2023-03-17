@@ -1,7 +1,7 @@
 import _ from 'lodash';
 
 const normalize = (value) => {
-  if (_.isObject(value)) {
+  if (_.isPlainObject(value)) {
     return '[complex value]';
   }
 

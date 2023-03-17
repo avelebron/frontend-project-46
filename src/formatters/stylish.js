@@ -1,38 +1,42 @@
 import _ from 'lodash';
 
-const stylish = (currentKey, currentValue, depth) => {
-  if (!_.isObject(currentValue)) {
-    return `${currentKey}: ${currentValue}`;
-  }
-  const indentBefore = '  '.repeat(depth);
-  const bracketIndent = '  '.repeat(depth - 1);
-  const lines = Object.entries(currentValue)
-    .flatMap(([key, ent]) => `  ${stylish(key, ent, depth + 2)}`);
+const replacer = ' ';
+const spacesCount = 4;
+const getIndent = (depth) => replacer.repeat(depth * spacesCount - 2);
 
-  return `${currentKey}: {\n${indentBefore}${lines.join(`\n${indentBefore}`)}\n${bracketIndent}}`;
+const signs = {
+  added: '+ ',
+  deleted: '- ',
+  unchanged: '  ',
 };
 
-const stylishToString = (tree) => {
-  const iter = (objects, depth) => {
-    const indentBefore = '  '.repeat(depth);
-    const bracketIndent = '  '.repeat(depth - 1);
-    const stylishedObjects = objects.flatMap((object) => {
-      const { name, value, status } = object;
-      const line = stylish(name, value, depth + 2);
-      if (status === 'removed') {
-        return `- ${line}`;
-      } if (status === 'added') {
-        return `+ ${line}`;
-      } if (status === 'unchanged') {
-        return `  ${line}`;
-      } if (status === 'updated') {
-        return [`- ${stylish(name, object.oldValue, depth + 2)}`, `+ ${line}`];
-      }
-      return `  ${name}: ${iter(value, depth + 2)}`;
-    });
-    return `{\n${indentBefore}${stylishedObjects.join(`\n${indentBefore}`)}\n${bracketIndent}}`;
+export default (data) => {
+  const iter = (curentValue, depth) => {
+    if (!_.isPlainObject(curentValue)) {
+      return `${curentValue}`;
+    }
+    const bracketIndent = replacer.repeat((depth - 1) * spacesCount);
+    const lines = Object
+      .entries(curentValue)
+      .map(([key, val]) => {
+        switch (val.type) {
+          case 'added':
+          case 'deleted':
+          case 'unchanged':
+            return `${getIndent(depth)}${signs[val.type]}${key}: ${iter(val.value, depth + 1)}`;
+          case 'changed':
+            return `${getIndent(depth)}- ${key}: ${iter(val.value1, depth + 1)}\n${getIndent(depth)}+ ${key}: ${iter(val.value2, depth + 1)}`;
+          case 'nested':
+            return `${getIndent(depth)}  ${key}: ${iter(val.children, depth + 1)}`;
+          default:
+            return `${getIndent(depth)}  ${key}: ${iter(val.value || val, depth + 1)}`;
+        }
+      });
+    return [
+      '{',
+      ...lines,
+      `${bracketIndent}}`,
+    ].join('\n');
   };
-  return iter(tree, 1);
+  return iter(data, 1);
 };
-
-export default stylishToString;
