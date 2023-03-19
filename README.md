@@ -7,6 +7,22 @@
 
 [![Test Coverage](https://api.codeclimate.com/v1/badges/a57632953d93c9273c5b/test_coverage)](https://codeclimate.com/github/avelebron/frontend-project-46/test_coverage)
 
-[![asciicast](https://asciinema.org/a/558837.svg)](https://asciinema.org/a/558837)
 
-[![asciicast](https://asciinema.org/a/565997.svg)](https://asciinema.org/a/565997)
+GENDIFF
+
+The package compares two files and outputs the differences between them. Supported formats: json, yaml, yml.
+Output reports in the form of stylish, plain or json.
+
+How to install:
+
+    make install
+
+Display help:
+
+    gendiff -h
+or
+    gendiff --help
+
+
+
+[![asciicast](https://asciinema.org/a/568312.svg)](https://asciinema.org/a/568312)
