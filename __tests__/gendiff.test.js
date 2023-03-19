@@ -1,29 +1,32 @@
-import { test, expect } from '@jest/globals';
-import path from 'path';
-import fs from 'fs';
 import { fileURLToPath } from 'url';
+import path, { dirname } from 'path';
+import fs from 'fs';
 import genDiff from '../src/index.js';
 
 const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
+const __dirname = dirname(__filename);
 const getFixturePath = (filename) => path.join(__dirname, '..', '__fixtures__', filename);
-const readFixture = (filename) => fs.readFileSync(getFixturePath(filename), 'utf-8');
 
-const expectedJSON = readFixture('result_json.txt');
-const expectedStylish = readFixture('result_stylish.txt');
-const expectedPlain = readFixture('result_plain.txt');
+describe.each([
+  ['stylish', 'result.stylish.txt'], ['plain', 'result.plain.txt'],
+  ['json', 'result.json.txt'],
+])('format %s', (format, expected) => {
+  test.each([
+    ['json', 'json'], ['yaml', 'yaml'], ['yml', 'yml'],
+  ])('file extension %s', (extension1, extensoin2) => {
+    const file1 = getFixturePath(`file1.${extension1}`);
+    const file2 = getFixturePath(`file2.${extensoin2}`);
+    const result = fs.readFileSync(getFixturePath(expected), 'utf8');
+    expect(genDiff(file1, file2, format)).toEqual(result);
+  });
+});
 
-const extensions = ['yaml', 'json'];
+test('unknown extension', () => {
+  expect(() => genDiff('__fixtures__/result.json.txt', '__fixtures__/result.json.txt'))
+    .toThrow('unknown extension txt');
+});
 
-test.each([
-  extensions,
-])('test', (extension) => {
-  const filepath1 = getFixturePath(`file1.${extension}`);
-  const filepath2 = getFixturePath(`file2.${extension}`);
-
-  expect(genDiff(filepath1, filepath2)).toBe(expectedStylish);
-  expect(genDiff(filepath1, filepath2, 'stylish')).toBe(expectedStylish);
-  expect(genDiff(filepath1, filepath2, 'plain')).toBe(expectedPlain);
-  expect(genDiff(filepath1, filepath2, 'json')).toBe(expectedJSON);
+test('wrong format', () => {
+  expect(() => genDiff('__fixtures__/file1.json', '__fixtures__/file2.json', 'wrongFormat'))
+    .toThrow('Unknown format - wrongFormat!');
 });
