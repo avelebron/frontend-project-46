@@ -1,4 +1,5 @@
-import path from 'node:path';
+import path from 'path';
+import process from 'process';
 import fs from 'fs';
 import getDifference from './calculateDiff.js';
 import parse from './parsers.js';
