@@ -8,7 +8,7 @@
 [![Test Coverage](https://api.codeclimate.com/v1/badges/a57632953d93c9273c5b/test_coverage)](https://codeclimate.com/github/avelebron/frontend-project-46/test_coverage)
 
 
-GENDIFF
+<b>GENDIFF</b>
 
 The package compares two files and outputs the differences between them. Supported formats: json, yaml, yml.
 Output reports in the form of stylish, plain or json.
