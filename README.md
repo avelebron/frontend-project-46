@@ -13,16 +13,15 @@
 The package compares two files and outputs the differences between them. Supported formats: json, yaml, yml.
 Output reports in the form of stylish, plain or json.
 
-How to install:
+<b>How to install:</b>
 
     make install
 
-Display help:
+<b>Display help:</b>
 
     gendiff -h
 or
     gendiff --help
-
 
 
 [![asciicast](https://asciinema.org/a/568312.svg)](https://asciinema.org/a/568312)
