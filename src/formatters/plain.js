@@ -14,7 +14,7 @@ const normalize = (value) => {
 
 export default (data) => {
   const iter = (node, path) => {
-    const lines = node.flatMap((data) => {
+    const lines = node.map((data) => {
       const {
         type, key, value, valueBefore, valueAfter, children,
       } = data;
@@ -36,7 +36,7 @@ export default (data) => {
           return null;
       }
     });
-
+    
     return _.compact(lines).join('\n');
   };
 
