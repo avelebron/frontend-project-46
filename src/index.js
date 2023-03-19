@@ -1,24 +1,17 @@
-import path from 'path';
+import path from 'node:path';
 import fs from 'fs';
-import calculateDiff from './calculateDiff.js';
+import getDifference from './calculateDiff.js';
 import parse from './parsers.js';
-import format from './formatters/index.js';
-import process from 'process';
+import formatter from './formatters/index.js';
 
-const readFile = (filepath) => {
-  const fullPath = path.resolve(process.cwd(), filepath);
-  return fs.readFileSync(fullPath, 'utf-8');
-};
-
-const getParsedData = (file) => {
-  const data = readFile(file);
-  const format = path.extname(file).slice(1);
-  return parse(data, format);
-};
+const getAbsolutePath = (filepath) => path.resolve(process.cwd(), filepath);
+const getData = (absolutePath) => fs.readFileSync(absolutePath, 'utf8');
+const getExtension = (absolutePath) => path.extname(absolutePath).slice(1);
 
 export default (filepath1, filepath2, formatName = 'stylish') => {
-  const file1 = getParsedData(filepath1);
-  const file2 = getParsedData(filepath2);
-  const diff = calculateDiff(file1, file2);
-  return format(diff, formatName);
+  const path1 = getAbsolutePath(filepath1);
+  const path2 = getAbsolutePath(filepath2);
+  const data1 = parse(getData(path1), getExtension(path1));
+  const data2 = parse(getData(path2), getExtension(path2));
+  return formatter(getDifference(data1, data2), formatName);
 };

@@ -1,44 +1,33 @@
 import _ from 'lodash';
 
-const normalize = (value) => {
-  if (_.isPlainObject(value)) {
-    return '[complex value]';
-  }
+const plainFormatter = (tree) => {
+  const iter = (objects, ancestry) => {
+    const stylishedObjects = objects.flatMap((object) => {
+      const { name, value, status } = object;
 
-  if (typeof value === 'string') {
-    return `'${value}'`;
-  }
-
-  return value;
-};
-
-export default (data) => {
-  const iter = (node, path) => {
-    const lines = node.map((data) => {
-      const {
-        type, key, value, valueBefore, valueAfter, children,
-      } = data;
-
-      switch (type) {
-        case 'nested': {
-          return iter(children, `${path}${key}.`);
+      const valueType = (val) => {
+        if (_.isObject(val)) {
+          return '[complex value]';
+        } if (_.isString(val)) {
+          return `'${val}'`;
         }
-        case 'added': {
-          return `Property '${path}${key}' was added with value: ${normalize(value)}`;
-        }
-        case 'deleted': {
-          return `Property '${path}${key}' was removed`;
-        }
-        case 'changed': {
-          return `Property '${path}${key}' was updated. From ${normalize(valueBefore)} to ${normalize(valueAfter)}`;
-        }
-        default:
-          return null;
+        return val;
+      };
+      const newName = [...ancestry, name].join('');
+      if (status === 'removed') {
+        return `Property '${newName}' was removed`;
+      } if (status === 'added') {
+        return `Property '${newName}' was added with value: ${valueType(value)}`;
+      } if (status === 'updated') {
+        return `Property '${newName}' was updated. From ${valueType(object.oldValue)} to ${valueType(value)}`;
+      } if (status === 'nested') {
+        return iter(value, `${newName}.`);
       }
+      return [];
     });
-    
-    return _.compact(lines).join('\n');
+    return `${stylishedObjects.join('\n')}`;
   };
-
-  return iter(data, '');
+  return iter(tree, '');
 };
+
+export default plainFormatter;
