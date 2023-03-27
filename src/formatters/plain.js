@@ -21,10 +21,12 @@ export default (data) => {
             return `Property '${tree}' was removed`;
           case 'changed':
             return `Property '${tree}' was updated. From ${convert(val.value1)} to ${convert(val.value2)}`;
+          case 'unchanged':
+            return [];
           case 'nested':
             return `${iter(val.children, newKey)}`;
           default:
-            return [];
+            throw new Error(`Unknown type: '${val.type}'!`);
         }
       }).join('\n');
     return lines;

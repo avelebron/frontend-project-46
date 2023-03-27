@@ -13,6 +13,8 @@
 The package compares two files and shows the differences between them. Supported formats: json, yaml, yml.
 Output reports in the form of stylish, plain or json.
 
+Program requires Node.js v18+ to run.
+
 <b>How to install:</b>
 
     make install

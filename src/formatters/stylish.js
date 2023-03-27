@@ -19,6 +19,7 @@ export default (data) => {
     const lines = Object
       .entries(curentValue)
       .map(([key, val]) => {
+        console.log(val.type);
         switch (val.type) {
           case 'added':
           case 'deleted':
@@ -28,8 +29,10 @@ export default (data) => {
             return `${getIndent(depth)}- ${key}: ${iter(val.value1, depth + 1)}\n${getIndent(depth)}+ ${key}: ${iter(val.value2, depth + 1)}`;
           case 'nested':
             return `${getIndent(depth)}  ${key}: ${iter(val.children, depth + 1)}`;
-          default:
+          case undefined:
             return `${getIndent(depth)}  ${key}: ${iter(val.value || val, depth + 1)}`;
+          default:
+            throw new Error(`Unknown type: '${val.type}'!`);
         }
       });
     return [
