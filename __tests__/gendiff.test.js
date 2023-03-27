@@ -18,7 +18,7 @@ const extensions = ['yaml', 'json'];
 
 test.each([
   extensions,
-])('test', (extension) => {
+])('genDiff tests', (extension) => {
   const filepath1 = getFixturePath(`file1.${extension}`);
   const filepath2 = getFixturePath(`file2.${extension}`);
 
