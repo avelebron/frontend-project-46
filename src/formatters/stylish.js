@@ -19,7 +19,6 @@ export default (data) => {
     const lines = Object
       .entries(curentValue)
       .map(([key, val]) => {
-        console.log(val.type);
         switch (val.type) {
           case 'added':
           case 'deleted':
